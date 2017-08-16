@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>iTunes API Tutorial</title>
+    <link rel="shortcut icon" href="http://findicons.com/files/icons/2770/ios_7_icons/512/music.png">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+
+    <style>
+        h1 {
+            color: white;
+            text-align: center;
+            padding-top: 75px;
+            padding-bottom: 70px;
+            background-image: url("http://melodrive.com/blog/wp-content/uploads/2017/02/score.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .info {
+            display: inline;
+        }
+
+        .failMessage {
+            text-align: center;
+            font-size: 60px;
+            color: red;
+            text-shadow: 2px 5px black;
+        }
+    </style>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+    <div class="row">
+        <div class="col s12">
+
+            <div id="header">
+                <h1>iTunes API Project</h1>
+            </div>
+            <!-- <h3> <a href="https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/#searchexamples">
+            Some Examples
+        </a>
+            </h3> -->
+            <!-- <h3>
+                To Do List:
+            </h3>
+            <ul>
+                <li>CSS frame work</li>
+                <li>Search Bar</li>
+                <li>Loading image.</li>
+                <li>Error Message</li>
+                <li>No result found message.</li>
+                <li>Make it look pretty:)</li>
+            </ul> -->
+            <div id="form">
+                <form id="search">
+                    <h4>Search for Artist</h4>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input type="text" id="custom-search-input" name="form" placeholder="Artist"><br>
+                            <input type="submit" id="button" value="Submit form">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <h3>
+                Songs
+            </h3>
+            <ul id="songs">
+
+            </ul>
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+            <!-- Compiled and minified JavaScript -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+
+            <script>
+                // $(document).ready(... This is jQuery function that runs when the page is loaded.
+                // Do you want to load when the page is ready or when some button is clicked?
+                // Are you waiting for an input from the user???
+                $(document).ready(function () {
+                    $("#search").on('submit', function () {
+                        let searchTerm = $('#custom-search-input').val();
+                        $("form")[0].reset();
+                        $.ajax({
+
+                            url: "https://itunes.apple.com/search?term=" + searchTerm,
+                            dataType: 'JSONP'
+                        })
+                            .done(function (data) {
+                                $("#songs").html("");
+                                console.log(data);
+                                // add code for when response from apple comes back.
+                                if (data.results.length === 0) {
+                                    $('#songs').append("<h5>Your search produced no results.</h5>");
+                                } else {
+                                    for (var i = 0; i < data.results.length; i++) {
+                                        if (data.results[i].trackName) {
+                                            $('#songs').append(`
+                                            <div class="media row">
+                                            <img class="d-flex mr-3 image col s2" src="${data.results[i].artworkUrl100}" alt="Generic placeholder image">
+                                            <div class="media-body">
+                                            <h6 col s10><a href="${data.results[i].trackViewUrl}">${data.results[i].trackName}</a></h6>
+                                            ${data.results[i].artistName}
+                                            (from album: ${data.results[i].collectionName})</br>
+                                            <audio controls src="${data.results[i].previewUrl}"></audio>                                                                              
+                                            </div>`)
+                                        }
+                                    }
+                                }
+                            })
+                            .fail(function (data) {
+                                console.log(data);
+                                $('#songs').append(`
+                                <div class="failMessage">Error! Type:${data.status}. Please try again later.</div>`)
+                            })
+                        return false;
+                    });
+                });
+            </script>
+            <!--Import jQuery before materialize.js-->
+        </div>
+    </div>
+
+</body>
+
+</html>
